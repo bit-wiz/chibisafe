@@ -2,7 +2,7 @@ import { Buffer } from 'node:buffer';
 import process from 'node:process';
 import { URL, fileURLToPath } from 'node:url';
 import cors from '@fastify/cors';
-import helmet from '@fastify/helmet';
+// import helmet from '@fastify/helmet';
 import fstatic from '@fastify/static';
 import fastify from 'fastify';
 import jetpack from 'fs-jetpack';
@@ -91,14 +91,15 @@ const start = async () => {
 	// Add decorator for the user object to use with FastifyRequest
 	server.decorateRequest('user', '');
 
-	await server.register(helmet, {
-		crossOriginResourcePolicy: true,
-		contentSecurityPolicy: true,
-		crossOriginEmbedderPolicy: true
-	});
+	// await server.register(helmet, {
+	// 	crossOriginResourcePolicy: true,
+	// 	contentSecurityPolicy: false,
+	// 	crossOriginEmbedderPolicy: true
+	// });
 
 	await server.register(cors, {
 		preflightContinue: true,
+		origin: '*',
 		allowedHeaders: [
 			'Accept',
 			'Authorization',
@@ -183,8 +184,8 @@ const start = async () => {
 			];
 
 			const route = routes.some(r => req.url.startsWith(r));
-
-			if (req.url === '/' || route) return reply.type('text/html').send(htmlBuffer);
+			//@ts-ignore
+			if (req.url === '/' || req.query.upname || route) return reply.type('text/html').send(htmlBuffer);
 
 			const file = LiveAssets.get(req.url.slice(1));
 			if (!file) {
