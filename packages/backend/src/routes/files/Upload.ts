@@ -18,7 +18,6 @@ import {
 import { validateAlbum } from '@/utils/UploadHelpers.js';
 import { getUsedQuota } from '@/utils/User.js';
 import prisma from '@/structures/database.js';
-import fs from 'fs';
 
 export const options = {
 	url: '/upload',
@@ -92,11 +91,8 @@ export const run = async (req: RequestWithUser, res: FastifyReply) => {
 		req.log.debug(`> Name for upload: ${newFileName}`);
 		req.log.info(`Admin: ${upload.metadata.admin}`);
 		// Move file to permanent location
-		const newPath = fileURLToPath(new URL(`../../../../../uploads/${newFileName}`, import.meta.url));
-
-		fs.copyFileSync(newPath, path.join(process.env.UP_PATH || '', upload.metadata.admin || '', newFileName));
-
-		fs.unlinkSync(newPath);
+		// const newPath = fileURLToPath(new URL(`../../../../../uploads/${newFileName}`, import.meta.url));
+		const newPath = path.join(process.env.UP_PATH || '', upload.metadata.admin || '', newFileName);
 
 		res.log.info(newPath);
 		const file = {
@@ -121,7 +117,8 @@ export const run = async (req: RequestWithUser, res: FastifyReply) => {
 			uploadedFile = fileOnDb.file;
 			await deleteTmpFile(upload.path as string);
 		} else {
-			await jetpack.moveAsync(upload.path as string, newPath);
+			await jetpack.copyAsync(upload.path as string, newPath);
+			await jetpack.removeAsync(upload.path as string);
 			// Store file in database
 			const savedFile = await storeFileToDb(req.user ? req.user : undefined, file, album ? album : undefined);
 
