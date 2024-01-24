@@ -1,0 +1,18 @@
+{
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"exactOptionalPropertyTypes": false,
+
+		"rootDir": "./",
+		"outDir": "./dist",
+		"sourceRoot": "./",
+		"baseUrl": ".",
+		"types": ["node", "vite/client"],
+		"paths": {
+			"@/*": ["./src/*"],
+			"~/*": ["./src/*"]
+		}
+	},
+	"include": ["src/**/*.ts", "src/**/*.vue"],
+	"exlude": ["node_modules"]
+}

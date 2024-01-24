@@ -1,0 +1,35 @@
+{
+	"editor.detectIndentation": false,
+	"editor.insertSpaces": false,
+	"files.insertFinalNewline": true,
+	"editor.formatOnPaste": true,
+	"editor.formatOnSave": true,
+	"files.eol": "\n",
+	"eslint.alwaysShowStatus": true,
+	"eslint.format.enable": true,
+	"eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "vue"],
+	"editor.codeActionsOnSave": {
+		"source.organizeImports": "never",
+		"source.fixAll": "always",
+		"source.fixAll.eslint": "always"
+	},
+	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"files.associations": {
+		"*.css": "postcss"
+	},
+	"[vue]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[javascript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[json]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"git.ignoreLimitWarning": true
+}

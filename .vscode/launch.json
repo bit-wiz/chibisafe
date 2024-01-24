@@ -1,0 +1,33 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"command": "yarn dev:reload",
+			"name": "[DEV] Start backend",
+			"request": "launch",
+			"type": "node-terminal",
+			"cwd": "${workspaceFolder}/packages/backend"
+		},
+		{
+			"command": "yarn dev",
+			"name": "[DEV] Start frontend",
+			"request": "launch",
+			"type": "node-terminal",
+			"cwd": "${workspaceFolder}/packages/frontend"
+		},
+		{
+			"type": "chrome",
+			"request": "launch",
+			"name": "Launch Chrome",
+			"url": "http://localhost:8001",
+			"webRoot": "${workspaceFolder}"
+		}
+	],
+	"compounds": [
+		{
+			"name": "Server/Client/Browser",
+			"configurations": ["[DEV] Start backend", "[DEV] Start frontend", "Launch Chrome"],
+			"stopAll": true
+		}
+	]
+}
