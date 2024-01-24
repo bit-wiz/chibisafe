@@ -18,6 +18,7 @@ import {
 import { validateAlbum } from '@/utils/UploadHelpers.js';
 import { getUsedQuota } from '@/utils/User.js';
 import prisma from '@/structures/database.js';
+import fs from 'fs';
 
 export const options = {
 	url: '/upload',
@@ -91,8 +92,11 @@ export const run = async (req: RequestWithUser, res: FastifyReply) => {
 		req.log.debug(`> Name for upload: ${newFileName}`);
 		req.log.info(`Admin: ${upload.metadata.admin}`);
 		// Move file to permanent location
-		// const newPath = fileURLToPath(new URL(`../../../../../uploads/${newFileName}`, import.meta.url));
-		const newPath = path.join(process.env.UP_PATH || '', upload.metadata.admin || '', newFileName);
+		const newPath = fileURLToPath(new URL(`../../../../../uploads/${newFileName}`, import.meta.url));
+
+		fs.copyFileSync(newPath, path.join(process.env.UP_PATH || '', upload.metadata.admin || '', newFileName));
+
+		fs.unlinkSync(newPath);
 
 		res.log.info(newPath);
 		const file = {
