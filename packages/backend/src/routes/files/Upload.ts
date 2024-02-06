@@ -58,6 +58,7 @@ export const run = async (req: RequestWithUser, res: FastifyReply) => {
 		});
 
 		if (upload.isChunkedUpload && !upload.ready) {
+			await deleteTmpFile(upload.path as string);
 			return await res.code(204).send();
 		}
 

@@ -164,6 +164,7 @@ const processFile = async (file: File) => {
 		debug: !import.meta.env.PROD,
 		endpoint: '/api/upload',
 		file,
+		retries: 10,
 		maxFileSize: maxFileSize.value,
 		chunkSize: chunkSize.value,
 		postParams: {
