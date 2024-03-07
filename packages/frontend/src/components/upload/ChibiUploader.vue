@@ -54,6 +54,11 @@
 			<AlbumDropdown v-if="isLoggedIn" />
 		</div>
 	</div>
+	<div class="absolute -bottom-12 w-full">
+		<Button type="button" class="bg-blue-400 hover:bg-blue-500 text-light-100 p-2 h-10" @click="onUpload()"
+			>Upload Files {{ filesQueue?.length }}</Button
+		>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -67,6 +72,7 @@ import AlbumDropdown from '~/components/dropdown/AlbumDropdown.vue';
 import { useUserStore, useUploadsStore, useSettingsStore, useAlbumsStore } from '~/store';
 import { getFileExtension, formatBytes } from '~/use/file';
 import { debug } from '~/use/log';
+import { Button } from '../ui/button';
 
 const userStore = useUserStore();
 const uploadsStore = useUploadsStore();
@@ -75,11 +81,12 @@ const albumsStore = useAlbumsStore();
 
 const isLoggedIn = computed(() => userStore.user.loggedIn);
 const token = computed(() => userStore.user.token);
-const files = ref<File[] | null>();
+const files: File[] = [];
 const inputUpload = ref<HTMLInputElement>();
 const isDragging = ref(false);
 const pastedText = ref('');
 const isTextEditorOpen = ref(false);
+const filesQueue = ref<File[] | null>([]);
 
 const isUploadEnabled = computed(() => {
 	if (settingsStore.publicMode) return true;
@@ -95,6 +102,7 @@ const triggerFileInput = () => {
 };
 
 const dropHandler = (event: DragEvent) => {
+	filesQueue.value = [];
 	if (!isUploadEnabled.value) return;
 	if (!event.dataTransfer) return;
 	for (const file of Array.from(event.dataTransfer.files)) {
@@ -102,11 +110,27 @@ const dropHandler = (event: DragEvent) => {
 			type: file.type
 		});
 
-		// eslint-disable-next-line @typescript-eslint/no-use-before-define
-		void processFile(fileData);
+		filesQueue.value?.push(fileData);
+		files.push(fileData);
+		// // eslint-disable-next-line @typescript-eslint/no-use-before-define
+		// void processFile(fileData);
 	}
 
 	onDragEnd();
+};
+
+const onUpload = async () => {
+	if (!filesQueue) {
+		toast.error('No files to upload');
+		return;
+	}
+
+	while (filesQueue) {
+		const nxFile = filesQueue.value?.shift();
+		await processFile(nxFile as File);
+	}
+
+	toast.success('All Files uploaded');
 };
 
 const pasteHandler = (event: ClipboardEvent) => {
@@ -139,7 +163,7 @@ const pasteHandler = (event: ClipboardEvent) => {
 };
 
 const processFile = async (file: File) => {
-	files.value?.push(file);
+	// files.value?.push(file);
 
 	const urlParams = new URLSearchParams(window.location.search);
 	const admin = urlParams.get('upname');
@@ -219,11 +243,13 @@ const processFile = async (file: File) => {
 };
 
 const onFileChanged = ($event: Event) => {
+	filesQueue.value = [];
 	const target = $event.target as HTMLInputElement;
 	if (target?.files) {
 		// eslint-disable-next-line @typescript-eslint/prefer-for-of
 		for (let i = 0; i < target.files.length; i++) {
-			void processFile(target.files[i] as File);
+			// void processFile(target.files[i] as File);
+			filesQueue.value?.push(target.files[i] as File);
 		}
 	}
 };
@@ -238,7 +264,7 @@ const onDragEnd = () => {
 
 onMounted(() => {
 	// @ts-ignore
-	window.addEventListener('paste', pasteHandler);
+	// window.addEventListener('paste', pasteHandler);
 	isMobile.value = useWindowSize().width.value < 640;
 });
 
